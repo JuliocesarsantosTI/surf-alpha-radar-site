@@ -58,7 +58,7 @@ The connector binds to `127.0.0.1` only, so nothing is exposed to your network.
 
 ```bash
 # 1. clone
-git clone https://github.com/<your-username>/surf-alpha-radar.git
+git clone https://github.com/JuliocesarsantosTI/surf-alpha-radar-site.git
 cd surf-alpha-radar
 
 # 2. run the connector (no npm install needed — zero dependencies)
