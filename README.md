@@ -10,19 +10,19 @@ There's no backend to host and no shared server: the app talks to a tiny local c
 
 ## Why it's different
 
-Most crypto tools either give you a black-box "score" or a wall of raw numbers. Surf Alpha Radar shows **exactly where every point comes from**: each Alpha Score segment maps to a real Surf signal, and the Signal Read explains the "why" in plain language — backed by live data like ETF flows, open interest, and on-chain activity.
+Most crypto tools either give you a black-box "score" or a wall of raw numbers. Surf Alpha Radar shows **exactly where every point comes from**: each Alpha Score segment maps to a real Surf signal, and the Signal Read explains the "why" in plain language backed by live data like ETF flows, open interest, and on-chain activity.
 
 ---
 
 ## Features
 
-- **Transparent Alpha Score (0–100)** — a segmented gauge where every input is visible and sourced from Surf CLI: price momentum, RSI technicals, market Fear & Greed, social attention, on-chain activity, and news attention.
-- **Instant vs Research modes** — `Instant` (~3 credits) runs price, RSI and Fear & Greed for a fast read; `Research` (~6–9 credits) adds social, on-chain, ETF flows, open interest, funding and long/short. Upgrade an Instant scan to Research from the result.
-- **Narrative TL;DR + Signal Read** — a plain-language summary generated from the real signals, plus specific data lines (ETF net flow, open interest, funding, long/short ratio) where available.
-- **Risk Scan** — liquidity, creator wallet, honeypot and holder-concentration checks.
-- **Crypto Pulse dashboard** — live market Fear & Greed (with history), mindshare sentiment, and the top mindshare leaders.
-- **Free-form questions** — ask something that isn't a token (e.g. *"what is the best crypto dex?"*) and it runs a web search via Surf instead of erroring.
-- **Credit-safe by design** — opening the app spends **zero credits**. Rankings and Pulse load only on click and cache in your browser for 30 minutes; past chats reopen instantly from a local snapshot (0 credits) with an optional **↻ Refresh** for fresh data.
+- **Transparent Alpha Score (0–100)**  a segmented gauge where every input is visible and sourced from Surf CLI: price momentum, RSI technicals, market Fear & Greed, social attention, on-chain activity, and news attention.
+- **Instant vs Research modes**  `Instant` (~3 credits) runs price, RSI and Fear & Greed for a fast read; `Research` (~6–9 credits) adds social, on-chain, ETF flows, open interest, funding and long/short. Upgrade an Instant scan to Research from the result.
+- **Narrative TL;DR + Signal Read**  a plain-language summary generated from the real signals, plus specific data lines (ETF net flow, open interest, funding, long/short ratio) where available.
+- **Risk Scan** liquidity, creator wallet, honeypot and holder-concentration checks.
+- **Crypto Pulse dashboard**  live market Fear & Greed (with history), mindshare sentiment, and the top mindshare leaders.
+- **Free-form questions**  ask something that isn't a token (e.g. *"what is the best crypto dex?"*) and it runs a web search via Surf instead of erroring.
+- **Credit-safe by design**  opening the app spends **zero credits**. Rankings and Pulse load only on click and cache in your browser for 30 minutes; past chats reopen instantly from a local snapshot (0 credits) with an optional **↻ Refresh** for fresh data.
 
 ---
 
@@ -33,9 +33,9 @@ Browser (the web app)  ──►  Local Connector  ──►  Surf CLI  ──�
    http://127.0.0.1:8787      Node, zero deps        your key / your credits
 ```
 
-1. **Web app** (`web/`) — the interface. Sends your question to the connector.
-2. **Local Connector** (`server.js`, `surf.js`) — a small zero-dependency Node server. It runs Surf CLI commands, parses the results, computes the Alpha Score, and caches responses.
-3. **Surf CLI** — the data engine. Everything is billed to your own Surf account, on your own machine.
+1. **Web app** (`web/`)  the interface. Sends your question to the connector.
+2. **Local Connector** (`server.js`, `surf.js`)  a small zero-dependency Node server. It runs Surf CLI commands, parses the results, computes the Alpha Score, and caches responses.
+3. **Surf CLI**  the data engine. Everything is billed to your own Surf account, on your own machine.
 
 The connector binds to `127.0.0.1` only, so nothing is exposed to your network.
 
@@ -44,7 +44,7 @@ The connector binds to `127.0.0.1` only, so nothing is exposed to your network.
 ## Requirements
 
 - **[Node.js](https://nodejs.org) 18+**
-- **[Guide to install requirements](https://github.com/JuliocesarsantosTI/install-prerequisite)
+- [Guide to install requirements](https://github.com/JuliocesarsantosTI/install-prerequisite)
 - **Surf CLI**, installed and authenticated. Install it and run `surf auth` first. Verify with:
   ```bash
   surf --version
@@ -64,7 +64,7 @@ cd surf-alpha-radar
 # 2. run the connector (no npm install needed — zero dependencies)
 npm start
 
-# 3. open the app
+# 3. open this address in your browser 
 #    → http://127.0.0.1:8787
 ```
 
@@ -156,6 +156,6 @@ surf-alpha-radar/
 
 ## License
 
-MIT — see [`LICENSE`](LICENSE).
+MIT  see [`LICENSE`](LICENSE).
 
 Built on [Surf](https://asksurf.ai). Not affiliated with or endorsed by Surf.
