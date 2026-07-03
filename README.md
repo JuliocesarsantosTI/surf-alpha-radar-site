@@ -44,6 +44,7 @@ The connector binds to `127.0.0.1` only, so nothing is exposed to your network.
 ## Requirements
 
 - **[Node.js](https://nodejs.org) 18+**
+- **[Guide to install requirements](https://github.com/JuliocesarsantosTI/install-prerequisite)
 - **Surf CLI**, installed and authenticated. Install it and run `surf auth` first. Verify with:
   ```bash
   surf --version
