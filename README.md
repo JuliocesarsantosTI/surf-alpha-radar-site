@@ -1,6 +1,6 @@
 # Surf Alpha Radar
 
-A **local-first crypto research copilot** built on the [Surf](https://asksurf.ai) CLI. It turns raw Surf data into a transparent **Alpha Score**, a plain-language **Signal Read**, and a live **Crypto Pulse** dashboard — running entirely on your own machine with your own Surf credits.
+A **local-first crypto research copilot** built on the [Surf](https://asksurf.ai) CLI. It turns raw Surf data into a transparent **Alpha Score**, a plain-language **Signal Read**, and a live **Crypto Pulse** dashboard running entirely on your own machine with your own Surf credits.
 
 There's no backend to host and no shared server: the app talks to a tiny local connector that runs the Surf CLI you already have installed. Every request uses *your* credits, so it costs nothing to run and keeps your key on your machine.
 
