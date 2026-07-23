@@ -539,4 +539,75 @@ async function getRankings(){
   ] };
 }
 
-module.exports = { analyze, parsePrice, parseSeriesValue, runRaw, getPulse, getRankings };
+/* ---------- scam verification ----------
+   Two very different levels of confidence:
+   - A contract address is unique → we can verify it definitively.
+   - A bare symbol is NOT unique → many tokens can share "$CASH", so the best we
+     can honestly do is report the ambiguity instead of pretending to identify it. */
+
+const EVM_CHAINS = ["ethereum", "base", "bsc", "arbitrum"];
+
+function chainForAddress(addr, hint) {
+  if (hint && EVM_CHAINS.includes(String(hint).toLowerCase())) return hint.toLowerCase();
+  return /^0x[a-fA-F0-9]{40}$/.test(addr) ? "ethereum" : null;
+}
+
+/* Definitive: a contract address identifies exactly one token. */
+async function verifyAddress(address, chainHint) {
+  const addr = String(address || "").trim();
+  if (!/^0x[a-fA-F0-9]{40}$/.test(addr)) {
+    return { kind: "address", address: addr, status: "unsupported_chain", credits: 0 };
+  }
+  const chain = chainForAddress(addr, chainHint);
+  try {
+    const raw = await surf(["token-transfer-stats", "--address", addr, "--chain", chain, "--time-range", "7d", "-o", "json"]);
+    const b = unwrap(raw); const d = b && b.data;
+    const credits = num(b && b.meta && b.meta.credits_used) || 4;
+    if (!d || d.total_transfers == null) {
+      return { kind: "address", address: addr, chain, status: "no_activity", credits };
+    }
+    const transfers = num(d.total_transfers) || 0;
+    const receivers = num(d.unique_receivers) || 0;
+    const usd = num(d.total_amount_usd) || 0;
+    // A real, live token moves constantly. A freshly-minted scam token barely moves.
+    const status = transfers < 50 || receivers < 20 ? "low_activity" : "active";
+    return { kind: "address", address: addr, chain, status, transfers, receivers, usd, credits };
+  } catch (e) {
+    const msg = String(e && e.message || e);
+    if (/not[_\s-]?found/i.test(msg)) return { kind: "address", address: addr, chain, status: "not_found", credits: 1 };
+    return { kind: "address", address: addr, chain, status: "unknown", error: msg.slice(0, 120), credits: 0 };
+  }
+}
+
+/* Honest: resolve how many distinct tokens carry this symbol. */
+async function verifySymbol(symbol) {
+  const sym = String(symbol || "").replace(/^\$/, "").toUpperCase();
+  if (!/^[A-Z0-9]{2,10}$/.test(sym)) return { kind: "symbol", symbol: sym, status: "invalid", credits: 0 };
+  try {
+    const raw = await surf(["search-token", "--q", sym, "--limit", "10", "-o", "json"]);
+    const b = unwrap(raw);
+    const arr = Array.isArray(b && b.data) ? b.data : (Array.isArray(b) ? b : []);
+    const credits = num(b && b.meta && b.meta.credits_used) || 1;
+    // Defensive field mapping — only keep entries whose symbol actually matches.
+    const matches = arr.map((t) => ({
+      name: t.name || t.project_name || t.token_name || t.title || null,
+      symbol: String(t.symbol || t.token_symbol || t.ticker || "").toUpperCase(),
+      chain: t.chain || t.chain_name || t.network || t.platform || null,
+      address: t.address || t.contract_address || t.token_address || null,
+    })).filter((t) => !t.symbol || t.symbol === sym);
+    if (!matches.length) return { kind: "symbol", symbol: sym, status: "none", credits };
+    return { kind: "symbol", symbol: sym, status: matches.length > 1 ? "ambiguous" : "single",
+             count: matches.length, top: matches[0], credits };
+  } catch (e) {
+    const msg = String(e && e.message || e);
+    if (/not[_\s-]?found/i.test(msg)) return { kind: "symbol", symbol: sym, status: "none", credits: 1 };
+    return { kind: "symbol", symbol: sym, status: "unknown", error: msg.slice(0, 120), credits: 0 };
+  }
+}
+
+async function verifyToken({ symbol, address, chain }) {
+  if (address) return verifyAddress(address, chain);
+  return verifySymbol(symbol);
+}
+
+module.exports = { analyze, parsePrice, parseSeriesValue, runRaw, getPulse, getRankings, verifyToken, verifySymbol, verifyAddress };

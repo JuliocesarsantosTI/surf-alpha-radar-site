@@ -1,7 +1,7 @@
 {
-  "name": "surf-alpha-radar",
+  "name": "surf-alpha-radar-connector",
   "version": "1.0.0",
-  "description": "A local-first crypto research copilot built on Surf CLI. Turns raw Surf data into a transparent Alpha Score, a plain-language read, and a live market dashboard.",
+  "description": "Local connector bridging the Surf Alpha Radar extension to Surf CLI. Zero dependencies.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

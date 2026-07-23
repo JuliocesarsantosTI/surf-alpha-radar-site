@@ -15,7 +15,7 @@
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
-const { analyze, getPulse, getRankings } = require("./surf");
+const { analyze, getPulse, getRankings, verifyToken } = require("./surf");
 
 const PORT = process.env.PORT || 8787;
 const cache = new Map();                 // query -> { at, data }
@@ -92,6 +92,33 @@ const server = http.createServer((req, res) => {
         return json(res, 200, data);
       } catch (e) {
         console.error("scan error:", (e && e.stack) || e);
+        return json(res, 500, { error: String(e.message || e) });
+      }
+    });
+    return;
+  }
+
+  if (req.method === "POST" && req.url === "/verify") {
+    let body = "";
+    req.on("data", (c) => (body += c));
+    req.on("end", async () => {
+      let sym = "", address = "", chain = "";
+      try {
+        const j = JSON.parse(body || "{}");
+        sym = (j.symbol || "").toString().trim();
+        address = (j.address || "").toString().trim();
+        chain = (j.chain || "").toString().trim();
+      } catch { /* ignore */ }
+      if (!sym && !address) return json(res, 400, { error: "missing symbol or address" });
+      const key = "verify::" + (address ? address.toLowerCase() : sym.toLowerCase());
+      const hit = cache.get(key);
+      // Verification is stable — cache it for an hour to keep credits near zero.
+      if (hit && Date.now() - hit.at < 60 * 60 * 1000) return json(res, 200, { ...hit.data, cached: true });
+      try {
+        const data = await verifyToken({ symbol: sym, address, chain });
+        cache.set(key, { at: Date.now(), data });
+        return json(res, 200, data);
+      } catch (e) {
         return json(res, 500, { error: String(e.message || e) });
       }
     });
